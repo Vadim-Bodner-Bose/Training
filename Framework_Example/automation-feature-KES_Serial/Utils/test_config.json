@@ -1,0 +1,37 @@
+{
+	"products": {
+		"premium": {
+			"productName": "K115",
+			"uiVersionString": "1.2.x.478",
+			"power_switch": {
+				"port": "1",
+				"userid": "admin",
+				"password": "1234",
+				"hostname": "192.168.0.100"
+			},
+			"sandstone": {
+				"comport": "COM7",
+				"baudrate": "115200",
+				"timeout": "7",
+				"write_timeout": "1",
+				"term_char": "\\r\\n"
+			},
+			"arenal": {
+				"comport": "COM4",
+				"baudrate": "9600",
+				"timeout": "7",
+				"write_timeout": "1",
+				"term_char": "\\r\\n"
+			},
+			"image_recog": {
+				"pathToRecogApp": "/ImageRecognitionApplication",
+				"pathToImages": "/media/pod_images/Dec22",
+				"pathToMasterRecipe": "/sandstone_active/recipes/master_recipes.json",
+				"pathToBrandInfo": "/sandstone_active/recipes/master_brand_info.json"
+			},
+			"firmware_reflash": {
+				"target_uiVersionString": "1.2.x.678"
+			}
+		}
+	}
+}

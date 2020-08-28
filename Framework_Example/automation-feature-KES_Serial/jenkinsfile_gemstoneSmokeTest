@@ -1,0 +1,107 @@
+// This project is not intended to be started manually
+// It is call from the gemstone-CI project
+pipeline {
+  agent {
+    node {
+      label 'gemstone'
+      // Doesn't actually re-use the upstream workspace
+      // customWorkspace "${params.UPSTREAM_WORKSPACE}"
+      // options { checkoutToSubdirectory("${params.UPSTREAM_WORKSPACE}")
+    }
+  }
+  options {
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '25'))
+    timestamps()
+  }
+
+  parameters {
+    string(name: 'UPSTREAM_WORKSPACE', defaultValue: '/home/jenkins/slave/workspace/Gemstone/gemstone-PL-MH', description: '')
+    string(name: 'UpstreamBranch', defaultValue: 'develop', description: 'Branch from upstream project')
+  }
+
+  stages {
+
+    stage('Init') {
+      steps {
+        script {
+          // currentBuild.displayName = "The name."
+          currentBuild.description = "${params.UpstreamBranch} branch"
+        }
+      }
+    }
+    stage('Output Info') {
+      steps {
+        echo "UPSTREAM_WORKSPACE = ${params.UPSTREAM_WORKSPACE}"
+        echo "env.WORKSPACE = ${env.WORKSPACE}"
+        echo "params.UPSTREAM_WORKSPACE = ${params.UPSTREAM_WORKSPACE}"
+        dir("${params.UPSTREAM_WORKSPACE}") {
+          sh '''
+            printenv
+            pwd
+          '''
+        }
+      }
+    }
+
+    stage('CheckoutSource test code') {
+      steps{
+        dir("${params.UPSTREAM_WORKSPACE}") {
+          checkout(
+            [$class: 'GitSCM',
+              branches: [
+                //[name: 'tcolombo/SQA-215-automate-orchestrator-fore-k3600']
+                [name: 'develop']
+              ],
+              doGenerateSubmoduleConfigurations: false,
+              extensions: [
+                [$class: 'RelativeTargetDirectory',
+                  relativeTargetDir: 'automation']
+                ],
+              gitTool: 'git',
+              submoduleCfg: [],
+              userRemoteConfigs: [
+                [
+                  credentialsId: 'b3914ab7-9386-46a2-9d4c-e18bdce87528',
+                  url: 'https://bitbucket.keurig.com/scm/sqaaut/automation.git'
+                ]
+              ]
+            ]
+          )
+        }
+      }
+    }
+    stage("Build Tests") {
+      steps {
+        dir("${params.UPSTREAM_WORKSPACE}") {
+          sh '''
+            cd gemstone
+            ./setup.sh
+
+            export ROOT_PATH=$PWD
+
+            make python           build=sim
+            make ApplianceManager build=sim
+            make ApplianceManager build=sim target=install
+          '''
+        }
+      }
+    }
+    stage("Run Tests") {
+      steps {
+        dir("${params.UPSTREAM_WORKSPACE}") {
+          sh '''
+            sudo /opt/appliance/bin/ApplianceManager &
+
+            sleep 5
+            cd automation
+            ./setup.sh
+
+            python3 -m pytest Tests/Mqtt_tests/test_state_machine.py -s -k test_powder_logic
+          '''
+        }
+      }
+    }
+
+  }
+}

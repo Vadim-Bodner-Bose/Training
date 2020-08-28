@@ -1,0 +1,28 @@
+pipeline {
+  agent {
+    node {
+      label "mazdvjnkapp04.gmcr.com "
+    }
+  }
+
+  stages {
+    stage('Run unit tests'){
+      steps {
+        sh '''
+          #!/bin/bash
+
+          cd Unittests
+          pytest -s -v test_AylaAPIcaller.py
+        '''
+      }
+    }
+  }
+  post {
+    success {
+      sleep 10
+      cleanWs()
+    }
+  }
+}
+
+

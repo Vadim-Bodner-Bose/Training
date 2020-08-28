@@ -1,0 +1,23 @@
+"""
+This is the config file template
+"""
+
+# BREWERS dsn
+
+dsn = "AC000W006145854"
+
+# BOARD TYPE
+BOARD_TYPE = "Arenal"
+
+# SERIAL PORT FOR THE BREWER
+COM_PORT = "COM7"
+COM_PORT_1 = "COM15"
+
+# BAUD RATE NEEDED FOR CONNECTION
+BAUD_RATE = "115200"
+BAUD_RATE_1 = "115200"
+
+
+# for k3600 and above
+IP = "10.0.2.15"
+
