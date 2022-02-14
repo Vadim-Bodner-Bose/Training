@@ -4,14 +4,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import time
 
-chromeOptions = Options()  # object for options class
-chromeOptions.add_experimental_option("prefs", {
+fireFOptions = Options()  # object for options class
+fireFOptions.add_experimental_option("prefs", {
     'download.default_directory': 'C:\DownloadSeleniumFiles'})  # define default directory
 
-# CHROME
+# Firefox
 # create a driver
-driver = webdriver.Chrome(executable_path="C:\Drivers\chromedriver.exe",
-                          chrome_options=chromeOptions)  # add chrom options to driver init
+driver = webdriver.firefox(executable_path="C:\Drivers\geckodriver.exe",
+                          chrome_options=fireFOptions)  # add chrom options to driver init
 # get the page
 driver.get("https://www.seleniumeasy.com/test/generate-file-to-download-demo.html")
 driver.maximize_window()
